@@ -27,6 +27,7 @@ define([
     attrHandle: null,
     defaultClass: "",
     elementToApplyTo: null,
+	showWidget: true,
 
     postCreate : function () {
       this.caption = [];
@@ -42,6 +43,10 @@ define([
       this.element = domConstruct.create("span");
       this.domNode.appendChild(this.element);
 
+	  if (!this.showWidget) {
+		  domAttr.set(this.element, "style", "display:none;");
+	  }
+
       switch (this.applyToEnum) { //Select the right element to apply the class too
         case "SELF":
         this.elementToApplyTo = this.element;
@@ -51,6 +56,9 @@ define([
         break;
         case "PARENT":
         this.elementToApplyTo = this.domNode.parentElement;
+		break;
+		case "SIBLING":
+        this.elementToApplyTo = this.domNode.previousSibling;
         break;
         default:
         this.elementToApplyTo = this.element;
@@ -71,36 +79,41 @@ define([
     },
 
     _setValueAttr : function (value) {
-      var i = this.caption.indexOf(value);
-      var classname = "";
-      var toDisplay = "";
+		if(value === true) {
+        	value = "true";
+        } else if (value === false) {
+        	value = "false";
+        }
 
-      if ((i >= 0) && (i < this.caption.length)) {
-        this.curindex = i;
-        classname = this.classnames[i];
-      } else {
-        this.curindex = 0;
-        classname = "";
-      }
+		var i = this.caption.indexOf(value);
+		var classname = "";
+		var toDisplay = "";
 
-      if (this.replacements[i] !== "" && typeof this.replacements[i] !== "undefined") {
-        toDisplay = this.replacements[i];
-      } else {
-        toDisplay = value;
-      }
+		if ((i >= 0) && (i < this.caption.length)) {
+			this.curindex = i;
+			classname = this.classnames[i];
+		} else {
+			this.curindex = 0;
+			classname = "";
+		}
 
-      if (this.glyphicon !== "") {
-        classname = classname + " glyphicon glyphicon-" + this.glyphicon + " ";
-      }
-      domAttr.set(this.elementToApplyTo, "class", this.defaultClass + classname); //Set the class to the existing class + enum-determined-class
+		if (this.replacements[i] !== "" && typeof this.replacements[i] !== "undefined") {
+			toDisplay = this.replacements[i];
+		} else {
+			toDisplay = value;
+		}
 
-      if (this.glyphicon !== "") {
-        domAttr.set(this.element, "innerHTML", "");
-        domAttr.set(this.element, "title", toDisplay); //Set innerHTML empty and tooltip to caption
-      } else {
-        domAttr.set(this.element, "innerHTML", toDisplay); //Set the innerHTML to the value of the attribute
-      }
+		if (this.glyphicon !== "") {
+			classname = classname + " glyphicon glyphicon-" + this.glyphicon + " ";
+		}
+		domAttr.set(this.elementToApplyTo, "class", this.defaultClass + classname); //Set the class to the existing class + enum-determined-class
 
+		if (this.glyphicon !== "") {
+			domAttr.set(this.element, "innerHTML", "");
+			domAttr.set(this.element, "title", toDisplay); //Set innerHTML empty and tooltip to caption
+		} else {
+			domAttr.set(this.element, "innerHTML", toDisplay); //Set the innerHTML to the value of the attribute
+		}
     },
 
     _getValueAttr : function (value) {
