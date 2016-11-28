@@ -8,7 +8,16 @@ iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
 	</icon>
 
    <properties>
-       <property key="name" type="attribute" required="true" isPath="optional" pathType="reference">
+	   <property key="attributeType" type="enumeration" required="true" defaultValue="primitive">
+			<caption>Attribute Type</caption>
+			<category>Data source</category>
+			<description>Select attribute for a primitive or association for a reference.</description>
+			<enumerationValues>
+				<enumerationValue key="primitive">Primitive</enumerationValue>
+				<enumerationValue key="reference">Reference</enumerationValue>
+			</enumerationValues>
+		</property>
+       <property key="name" type="attribute" required="false" isPath="optional" pathType="reference">
 			<caption>Attribute</caption>
 			<category>Data source</category>
 			<description>The attribute to manipulate</description>
@@ -18,6 +27,11 @@ iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
 				<attributeType name="Boolean"/>
 			</attributeTypes>
        </property>
+	   <property key="referenceEntity" type="entity" required="false" isPath="yes" pathType="reference">
+		   <caption>Reference To Check</caption>
+		   <category>Data source</category>
+		   <description>Select a referenced entity to check for its presence. Map values "true" and "false".</description>
+	   </property>
        <property key="enumvalues" type="object" isList="true" required="false">
 			<caption>Values</caption>
 			<category>Data source</category>

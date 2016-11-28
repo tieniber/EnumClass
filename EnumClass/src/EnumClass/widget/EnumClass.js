@@ -25,9 +25,13 @@ define([
     curindex : 0,
     element : null,
     attrHandle: null,
+    objHandle: null,
     defaultClass: "",
     elementToApplyTo: null,
 	showWidget: true,
+	referenceEntity: null,
+	_referenceName: null,
+	attributeType: "primitive",
 
     postCreate : function () {
 
@@ -55,44 +59,49 @@ define([
 		    }
 		}(Element.prototype);
 
-      this.caption = [];
-      this.classnames = [];
-      this.replacements = [];
-      // copy data from object array
-      for (var i = 0; i < this.enumvalues.length; i++) {
-        this.caption.push(this.enumvalues[i].captions);
-        this.classnames.push(this.enumvalues[i].classnames);
-        this.replacements.push(this.enumvalues[i].replacements);
-      }
+		//End polyfill
+		if (this.referenceEntity) {
+			this._referenceName = this.referenceEntity.split("/")[0];
+		}
 
-      this.element = domConstruct.create("span");
-      this.domNode.appendChild(this.element);
+		this.caption = [];
+		this.classnames = [];
+		this.replacements = [];
+		// copy data from object array
+		for (var i = 0; i < this.enumvalues.length; i++) {
+			this.caption.push(this.enumvalues[i].captions);
+			this.classnames.push(this.enumvalues[i].classnames);
+			this.replacements.push(this.enumvalues[i].replacements);
+		}
 
-	  if (!this.showWidget) {
-		  domAttr.set(this.element, "style", "display:none;");
-	  }
+		this.element = domConstruct.create("span");
+		this.domNode.appendChild(this.element);
 
-      switch (this.applyToEnum) { //Select the right element to apply the class too
-        case "SELF":
-        this.elementToApplyTo = this.element;
-        break;
-        case "ROW":
-        this.elementToApplyTo = this.element.closest(".mx-templategrid-row");
-        break;
-        case "PARENT":
-        this.elementToApplyTo = this.domNode.parentElement;
-		break;
+		if (!this.showWidget) {
+			domAttr.set(this.element, "style", "display:none;");
+		}
+
+		switch (this.applyToEnum) { //Select the right element to apply the class too
+		case "SELF":
+			this.elementToApplyTo = this.element;
+			break;
+		case "ROW":
+			this.elementToApplyTo = this.element.closest(".mx-templategrid-row");
+			break;
+		case "PARENT":
+			this.elementToApplyTo = this.domNode.parentElement;
+			break;
 		case "SIBLING":
-        this.elementToApplyTo = this.domNode.previousSibling;
-        break;
-        default:
-        this.elementToApplyTo = this.element;
-      }
-      this.defaultClass = domAttr.get(this.elementToApplyTo, "class");
+			this.elementToApplyTo = this.domNode.previousSibling;
+			break;
+		default:
+			this.elementToApplyTo = this.element;
+		}
+		this.defaultClass = domAttr.get(this.elementToApplyTo, "class");
 
-      if (this.defaultClass !== "") {
-        this.defaultClass += " ";
-      }
+		if (this.defaultClass !== "") {
+			this.defaultClass += " ";
+		}
     },
 
     update : function (obj, callback) {
@@ -104,6 +113,14 @@ define([
     },
 
     _setValueAttr : function (value) {
+		if(this.attributeType == "reference") {
+			if(value) {
+				value = "true";
+			} else {
+				value = "false";
+			}
+		}
+
 		if(value === true) {
         	value = "true";
         } else if (value === false) {
@@ -156,19 +173,27 @@ define([
       if (this.attrHandle) {
         mx.data.unsubscribe(this.attrHandle);
       }
+	  if (this.objHandle) {
+		mx.data.unsubscribe(this.objHandle);
+	  }
     },
 
     _resetSubscriptions : function () {
-      if (this.contextGUID) {
-        this._unsubscribe();
-        this.attrHandle = this.subscribe({
-          guid : this.contextGUID,
-          attr : this.name,
-          callback : lang.hitch(this, function (guid, attr, attrValue) {
-            this._setValueAttr(attrValue);
-          })
-        });
-      }
+		var attributeName = this.name;
+		if(this.attributeType == "reference") {
+			attributeName = this._referenceName;
+		}
+
+		if (this.contextGUID) {
+			this._unsubscribe();
+			this.attrHandle = this.subscribe({
+			  guid : this.contextGUID,
+			  attr : this.name,
+			  callback : lang.hitch(this, function (guid, attr, attrValue) {
+			    this._setValueAttr(attrValue);
+			  })
+			});
+		}
     },
 
     uninitialize: function () {
