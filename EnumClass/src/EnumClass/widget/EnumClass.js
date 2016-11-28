@@ -16,6 +16,7 @@ define([
     enumvalues : [], //value array, keep it compatible with mx4
     glyphicon: "",
     applyToEnum: "",
+    associationClassName: "",
 
     // internal variables
     contextGUID : null,
@@ -60,6 +61,8 @@ define([
 		}(Element.prototype);
 
 		//End polyfill
+
+    // STYLE BY REFERENCE
 		if (this.referenceEntity) {
 			this._referenceName = this.referenceEntity.split("/")[0];
 		}
@@ -107,6 +110,12 @@ define([
     update : function (obj, callback) {
       if (obj) {
         this.contextGUID = obj.getGuid();
+        // check reference
+        if (this._referenceName && obj.get(this._referenceName) !== ""){
+          // console.log(obj.get(this._referenceName))
+          // set the classes
+          this.elementToApplyTo.className += " " + this.associationClassName
+        }
         this._resetSubscriptions();
       }
       callback();
