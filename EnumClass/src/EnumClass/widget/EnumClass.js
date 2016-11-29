@@ -91,6 +91,9 @@ define([
 		case "ROW":
 			this.elementToApplyTo = this.element.closest(".mx-templategrid-row");
 			break;
+		case "LISTITEM":
+			this.elementToApplyTo = this.element.closest(".mx-listview-item");
+			break;
 		case "PARENT":
 			this.elementToApplyTo = this.domNode.parentElement;
 			break;
