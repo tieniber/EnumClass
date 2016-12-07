@@ -73,7 +73,6 @@
                 <enumerationValue key="PARENT">Parent</enumerationValue>
                 <enumerationValue key="SIBLING">Previous Sibling</enumerationValue>
                 <enumerationValue key="ROW">Templategrid Row</enumerationValue>
-                <enumerationValue key="LISTITEM">Listview Item</enumerationValue>				
             </enumerationValues>
         </property>
         <property key="glyphicon" type="string" required="false">
