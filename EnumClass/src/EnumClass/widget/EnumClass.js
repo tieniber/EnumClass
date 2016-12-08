@@ -4,8 +4,8 @@ define([
   'dojo/_base/lang',
   "dojo/dom-construct",
   "dojo/dom-attr",
-  "dojo/NodeList-traverse"
-], function (declare, _WidgetBase, lang, domConstruct, domAttr) {
+  "dojo/dom-class"
+], function (declare, _WidgetBase, lang, domConstruct, domAttr, domClass) {
 	"use strict";
 
 	// Declare widget"s prototype.
@@ -91,6 +91,9 @@ define([
 		case "ROW":
 			this.elementToApplyTo = this.element.closest(".mx-templategrid-row");
 			break;
+		case "ITEM":
+			this.elementToApplyTo = this.element.closest(".mx-listview-item");
+			break;
 		case "PARENT":
 			this.elementToApplyTo = this.domNode.parentElement;
 			break;
@@ -100,11 +103,12 @@ define([
 		default:
 			this.elementToApplyTo = this.element;
 		}
-		this.defaultClass = domAttr.get(this.elementToApplyTo, "class");
+		//ET 12/7/16 -- Removed in favor of the dom-class module so two EnumClass widgets can peacefully coexist
+		//this.defaultClass = domAttr.get(this.elementToApplyTo, "class");
 
-		if (this.defaultClass !== "") {
-			this.defaultClass += " ";
-		}
+		//if (this.defaultClass !== "") {
+		//	this.defaultClass += " ";
+		//}
     },
 
     update : function (obj, callback) {
@@ -114,8 +118,11 @@ define([
         if (this._referenceName && obj.get(this._referenceName) !== ""){
           // console.log(obj.get(this._referenceName))
           // set the classes
-          this.elementToApplyTo.className += " " + this.associationClassName
-        }
+          //this.elementToApplyTo.className += " " + this.associationClassName
+		  domClass.add(this.elementToApplyTo, "this.associationClassName");
+	  } else {
+		  domClass.remove(this.elementToApplyTo, "this.associationClassName");
+	  }
         this._resetSubscriptions();
       }
       callback();
@@ -157,7 +164,13 @@ define([
 		if (this.glyphicon !== "") {
 			classname = classname + " glyphicon glyphicon-" + this.glyphicon + " ";
 		}
-		domAttr.set(this.elementToApplyTo, "class", this.defaultClass + classname); //Set the class to the existing class + enum-determined-class
+		//domAttr.set(this.elementToApplyTo, "class", this.defaultClass + classname); //Set the class to the existing class + enum-determined-class
+		for (var i = 0; i < this.classnames.length; i++) {
+			if(classname !== this.classnames[i]) {
+				domClass.remove(this.elementToApplyTo, this.classnames[i]);
+			}
+		}
+		domClass.add(this.elementToApplyTo, classname);
 
 		if (this.glyphicon !== "") {
 			domAttr.set(this.element, "innerHTML", "");
