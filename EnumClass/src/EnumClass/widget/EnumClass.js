@@ -119,9 +119,9 @@ define([
           // console.log(obj.get(this._referenceName))
           // set the classes
           //this.elementToApplyTo.className += " " + this.associationClassName
-		  domClass.add(this.elementToApplyTo, "this.associationClassName");
+		  domClass.add(this.elementToApplyTo, this.associationClassName);
 	  } else {
-		  domClass.remove(this.elementToApplyTo, "this.associationClassName");
+		  domClass.remove(this.elementToApplyTo, this.associationClassName);
 	  }
         this._resetSubscriptions();
       }
