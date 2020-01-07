@@ -120,9 +120,11 @@ define([
           // set the classes
           //this.elementToApplyTo.className += " " + this.associationClassName
 		  domClass.add(this.elementToApplyTo, this.associationClassName);
-	  } else {
-		  domClass.remove(this.elementToApplyTo, this.associationClassName);
-	  }
+		} else if (this.name && obj.get(this.name)) {
+			this._setValueAttr(obj.get(this.name));
+		} else {
+			domClass.remove(this.elementToApplyTo, this.associationClassName);
+	  	}
         this._resetSubscriptions();
       }
       callback();
